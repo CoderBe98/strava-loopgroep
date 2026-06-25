@@ -66,11 +66,14 @@ def create_app(settings: Settings | None = None) -> Flask:
             return view(*args, **kwargs)
         return wrapped
 
-    @app.get("/health")
-    def health():
-        return {"status": "ok"}, 200
-
-    @app.get("/")
+@app.get("/health")
+def health():
+    return {
+        "status": "ok",
+        "version": "historische-rapporten-v1"
+    }, 200
+  
+    @app.get("")
     def home():
         total = count_participants(cfg.database_path)
         return render_template_string("""<!doctype html><html lang=nl><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><title>{{group}}</title><style>{{style}}</style></head><body><div class=card><h1>{{group}}</h1><p>Koppel je Strava-account éénmalig om in het dagelijkse loop- en wandeloverzicht te worden opgenomen.</p><p><a class='button orange' href='/koppelen'>Koppel mijn Strava</a></p><p class=small>Momenteel gekoppeld: {{total}} deelnemer(s).</p><p><a href='/beheer'>Beheerder</a> · <a href='/privacy'>Privacy</a></p></div></body></html>""", group=cfg.group_name, total=total, style=STYLE)
